@@ -81,6 +81,7 @@ export class ReviewGenerator {
     this.client = new OpenAI({
       apiKey: this.options.apiKey,
       baseURL: this.options.baseURL,
+      dangerouslyAllowBrowser: true,
     });
   }
 
