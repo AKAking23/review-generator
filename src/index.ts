@@ -135,7 +135,7 @@ export class ReviewGenerator {
 
     const featuresList = product.features ? product.features.join("、") : "";
 
-    const prompt = `请你为以下产品生成一段${lengthDescription}的${sentimentDescription}收货评价，使用${
+    const prompt = `请你为以下产品（面向供应商不是商家）生成一段${lengthDescription}的${sentimentDescription}收货评价，使用${
       this.options.language
     }:
     
