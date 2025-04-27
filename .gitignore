@@ -1,0 +1,12 @@
+node_modules
+.DS_Store
+dist
+cert
+dist-ssr
+*.local
+*.lock
+.idea
+.cursor
+
+# Editor directories and files
+.vscode

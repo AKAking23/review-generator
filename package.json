@@ -1,0 +1,36 @@
+{
+  "name": "review-generator",
+  "version": "1.0.0",
+  "description": "一个使用DeepSeek API自动生成收货评价的npm插件",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "deepseek",
+    "ai",
+    "review",
+    "generator",
+    "e-commerce"
+  ],
+  "author": "AKAKing23",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AKAking23/review-generator"
+  },
+  "dependencies": {
+    "openai": "^4.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.3",
+    "typescript": "^5.3.2",
+    "ts-node": "^10.9.2"
+  },
+  "files": [
+    "dist/**/*"
+  ]
+}

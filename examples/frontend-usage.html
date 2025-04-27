@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeepSeek评价生成器示例</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+    }
+    .features-container {
+      display: flex;
+      flex-direction: column;
+    }
+    .feature-item {
+      display: flex;
+      margin-bottom: 5px;
+    }
+    .feature-item input {
+      flex: 1;
+      margin-right: 5px;
+    }
+    .remove-feature {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>DeepSeek评价生成器示例</h1>
+  
+  <div class="form-group">
+    <label for="apiKey">DeepSeek API密钥:</label>
+    <input type="text" id="apiKey" placeholder="输入你的DeepSeek API密钥">
+  </div>
+  
+  <div class="form-group">
+    <label for="productName">产品名称:</label>
+    <input type="text" id="productName" placeholder="例如: 无线蓝牙耳机">
+  </div>
+  
+  <div class="form-group">
+    <label for="productCategory">产品分类:</label>
+    <input type="text" id="productCategory" placeholder="例如: 电子产品">
+  </div>
+  
+  <div class="form-group">
+    <label>产品特点:</label>
+    <div class="features-container" id="featuresContainer">
+      <div class="feature-item">
+        <input type="text" class="feature-input" placeholder="例如: 主动降噪">
+        <button class="remove-feature">删除</button>
+      </div>
+    </div>
+    <button id="addFeature" style="margin-top: 5px;">添加特点</button>
+  </div>
+  
+  <div class="form-group">
+    <label for="sentiment">评价情感:</label>
+    <select id="sentiment">
+      <option value="positive">正面</option>
+      <option value="neutral">中性</option>
+      <option value="negative">负面</option>
+    </select>
+  </div>
+  
+  <div class="form-group">
+    <label for="length">评价长度:</label>
+    <select id="length">
+      <option value="short">简短</option>
+      <option value="medium">中等</option>
+      <option value="long">详细</option>
+    </select>
+  </div>
+  
+  <button id="generateReview">生成评价</button>
+  
+  <div class="result" id="result" style="display: none;">
+    <h2>生成的评价:</h2>
+    <p id="generatedReview"></p>
+  </div>
+
+  <!-- 使用CDN引入评价生成器库 -->
+  <script src="https://cdn.jsdelivr.net/npm/deepseek-review-generator/dist/index.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const addFeatureBtn = document.getElementById('addFeature');
+      const featuresContainer = document.getElementById('featuresContainer');
+      const generateBtn = document.getElementById('generateReview');
+      const resultDiv = document.getElementById('result');
+      const generatedReviewElement = document.getElementById('generatedReview');
+      
+      // 添加特点
+      addFeatureBtn.addEventListener('click', function() {
+        const featureItem = document.createElement('div');
+        featureItem.className = 'feature-item';
+        featureItem.innerHTML = `
+          <input type="text" class="feature-input" placeholder="例如: 主动降噪">
+          <button class="remove-feature">删除</button>
+        `;
+        featuresContainer.appendChild(featureItem);
+        
+        // 为新添加的删除按钮绑定事件
+        featureItem.querySelector('.remove-feature').addEventListener('click', function() {
+          featuresContainer.removeChild(featureItem);
+        });
+      });
+      
+      // 绑定已存在的删除按钮
+      document.querySelector('.remove-feature').addEventListener('click', function() {
+        const featureItem = this.parentElement;
+        featuresContainer.removeChild(featureItem);
+      });
+      
+      // 生成评价
+      generateBtn.addEventListener('click', async function() {
+        const apiKey = document.getElementById('apiKey').value;
+        if (!apiKey) {
+          alert('请输入DeepSeek API密钥');
+          return;
+        }
+        
+        const productName = document.getElementById('productName').value;
+        if (!productName) {
+          alert('请输入产品名称');
+          return;
+        }
+        
+        const productCategory = document.getElementById('productCategory').value;
+        const sentiment = document.getElementById('sentiment').value;
+        const length = document.getElementById('length').value;
+        
+        // 获取所有特点
+        const featureInputs = document.querySelectorAll('.feature-input');
+        const features = [];
+        featureInputs.forEach(input => {
+          if (input.value.trim()) {
+            features.push(input.value.trim());
+          }
+        });
+        
+        try {
+          // 创建评价生成器实例
+          const reviewGenerator = new DeepseekReviewGenerator.ReviewGenerator({
+            apiKey: apiKey,
+            sentiment: sentiment,
+            length: length,
+            language: '中文',
+            temperature: 0.7
+          });
+          
+          // 生成评价
+          generateBtn.textContent = '生成中...';
+          generateBtn.disabled = true;
+          
+          const product = {
+            name: productName,
+            category: productCategory || undefined,
+            features: features.length > 0 ? features : undefined
+          };
+          
+          const review = await reviewGenerator.generateReview(product);
+          
+          // 显示结果
+          generatedReviewElement.textContent = review;
+          resultDiv.style.display = 'block';
+        } catch (error) {
+          alert('生成评价失败: ' + error.message);
+          console.error(error);
+        } finally {
+          generateBtn.textContent = '生成评价';
+          generateBtn.disabled = false;
+        }
+      });
+    });
+  </script>
+</body>
+</html> 
