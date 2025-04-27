@@ -1,6 +1,6 @@
 {
   "name": "review-generator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "一个使用DeepSeek API自动生成收货评价的npm插件",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
