@@ -65,6 +65,36 @@ const DEFAULT_OPTIONS: Partial<ReviewGeneratorOptions> = {
 };
 
 /**
+ * 寻源项目信息
+ */
+export interface SourcingProject {
+  /**
+   * 项目名称
+   */
+  name: string;
+  /**
+   * 合同类型
+   */
+  contractType: string;
+  /**
+   * 计划签约周期
+   */
+  contractPeriod: string;
+  /**
+   * 是否续签
+   */
+  isRenewal: boolean;
+  /**
+   * 寻源采购方式
+   */
+  sourcingMethod: string;
+  /**
+   * 其他相关信息
+   */
+  additionalInfo?: string;
+}
+
+/**
  * 收货评价生成器类
  */
 export class ReviewGenerator {
@@ -153,6 +183,66 @@ ${featuresList ? `产品特点: ${featuresList}` : ""}
     }
 
     return reviews;
+  }
+
+  /**
+   * 生成寻源采购策略
+   * @param project 寻源项目信息
+   * @returns 生成的采购策略文本
+   */
+  async generateSourcingStrategy(project: SourcingProject): Promise<string> {
+    const prompt = `请根据以下寻源项目信息生成一份专业的寻源采购策略，使用${
+      this.options.language
+    }:
+    
+项目名称: ${project.name}
+合同类型: ${project.contractType}
+计划签约周期: ${project.contractPeriod}
+是否续签: ${project.isRenewal ? '是' : '否'}
+寻源采购方式: ${project.sourcingMethod}
+${project.additionalInfo ? `其他信息: ${project.additionalInfo}` : ''}
+
+策略要求:
+1. 包含寻源背景分析
+2. 详细的市场分析和供应商选择策略
+3. 评估标准和谈判要点
+4. 风险管理和应对措施
+5. 具体实施计划和时间表建议`;
+
+    try {
+      const response = await this.client.chat.completions.create({
+        model: this.options.model!,
+        messages: [
+          {
+            role: "system",
+            content: "你是一个专业的采购策略顾问，能够根据寻源项目基本信息生成详细的采购策略。",
+          },
+          { role: "user", content: prompt },
+        ],
+        temperature: this.options.temperature,
+      });
+
+      return response.choices[0].message.content || "";
+    } catch (error) {
+      console.error("生成采购策略时出错:", error);
+      throw new Error(`生成采购策略失败: ${(error as Error).message}`);
+    }
+  }
+
+  /**
+   * 批量生成多个寻源项目的采购策略
+   * @param projects 寻源项目列表
+   * @returns 生成的采购策略列表
+   */
+  async generateBatchSourcingStrategies(projects: SourcingProject[]): Promise<string[]> {
+    const strategies: string[] = [];
+
+    for (const project of projects) {
+      const strategy = await this.generateSourcingStrategy(project);
+      strategies.push(strategy);
+    }
+
+    return strategies;
   }
 }
 

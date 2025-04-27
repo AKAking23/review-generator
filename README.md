@@ -9,6 +9,7 @@
 - 📏 可自定义评价长度（简短、中等、详细）
 - 🌍 支持多语言评价生成
 - 📦 支持批量生成多个产品的评价
+- 📊 支持根据寻源基本信息生成专业采购策略
 
 ## 安装
 
@@ -120,6 +121,94 @@ interface Product {
   features?: string[]; // 产品特点 (可选)
 }
 ```
+
+### 寻源采购策略生成
+
+```typescript
+import { ReviewGenerator, SourcingProject } from 'review-generator';
+
+// 初始化生成器
+const generator = new ReviewGenerator({
+  apiKey: 'your-deepseek-api-key', // 替换为你的DeepSeek API密钥
+  language: '中文',  // 生成策略的语言
+  temperature: 0.5   // 降低随机性以获得更专业的输出
+});
+
+// 定义寻源项目信息
+const project: SourcingProject = {
+  name: "办公用品采购项目",
+  contractType: "框架协议",
+  contractPeriod: "一年",
+  isRenewal: false,
+  sourcingMethod: "公开招标",
+  additionalInfo: "预算约50万元" // 可选
+};
+
+// 生成采购策略
+generator.generateSourcingStrategy(project)
+  .then(strategy => {
+    console.log(strategy);
+  })
+  .catch(error => {
+    console.error('生成采购策略失败:', error);
+  });
+```
+
+### 批量生成采购策略
+
+```typescript
+const projects: SourcingProject[] = [
+  {
+    name: "办公用品采购项目",
+    contractType: "框架协议",
+    contractPeriod: "一年",
+    isRenewal: false,
+    sourcingMethod: "公开招标"
+  },
+  {
+    name: "软件开发服务",
+    contractType: "服务合同",
+    contractPeriod: "两年",
+    isRenewal: true,
+    sourcingMethod: "邀请招标"
+  }
+];
+
+// 批量生成采购策略
+generator.generateBatchSourcingStrategies(projects)
+  .then(strategies => {
+    strategies.forEach((strategy, index) => {
+      console.log(`项目 ${index + 1}: ${projects[index].name}`);
+      console.log(strategy);
+    });
+  })
+  .catch(error => {
+    console.error('批量生成采购策略失败:', error);
+  });
+```
+
+### SourcingProject接口
+
+```typescript
+interface SourcingProject {
+  name: string;           // 项目名称
+  contractType: string;   // 合同类型
+  contractPeriod: string; // 计划签约周期
+  isRenewal: boolean;     // 是否续签
+  sourcingMethod: string; // 寻源采购方式
+  additionalInfo?: string; // 其他相关信息(可选)
+}
+```
+
+### 方法
+
+#### generateSourcingStrategy(project: SourcingProject): Promise<string>
+
+根据寻源项目信息生成专业的采购策略。
+
+#### generateBatchSourcingStrategies(projects: SourcingProject[]): Promise<string[]>
+
+批量生成多个寻源项目的采购策略。
 
 ## 许可证
 
