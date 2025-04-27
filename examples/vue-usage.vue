@@ -1,5 +1,5 @@
 <template>
-  <div class="deepseek-review-generator">
+  <div class="review-generator">
     <h1>DeepSeek评价生成器示例 (Vue版)</h1>
     
     <div class="form-group">
@@ -63,11 +63,11 @@
 
 <script>
 // 导入方式1：如果使用的是Vue CLI或webpack设置
-// npm install deepseek-review-generator
-import { ReviewGenerator } from 'deepseek-review-generator';
+// npm install review-generator
+import { ReviewGenerator } from 'review-generator';
 
 // 导入方式2：如果使用的是CDN，在index.html中添加：
-// <script src="https://cdn.jsdelivr.net/npm/deepseek-review-generator/dist/index.js"></script>
+// <script src="https://cdn.jsdelivr.net/npm/review-generator/dist/index.js"></script>
 // 然后这里不需要import语句
 
 export default {
@@ -151,7 +151,7 @@ export default {
 </script>
 
 <style scoped>
-.deepseek-review-generator {
+.review-generator {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   max-width: 800px;
   margin: 0 auto;

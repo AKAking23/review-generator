@@ -13,7 +13,7 @@
 ## 安装
 
 ```bash
-npm install deepseek-review-generator
+npm install review-generator
 ```
 
 ## 使用方法
@@ -21,7 +21,7 @@ npm install deepseek-review-generator
 ### 基本用法
 
 ```typescript
-import { ReviewGenerator, Product } from 'deepseek-review-generator';
+import { ReviewGenerator, Product } from 'review-generator';
 
 // 初始化评价生成器
 const reviewGenerator = new ReviewGenerator({
